@@ -18,7 +18,7 @@ export default function FilesPage() {
         if (files.length === 0) return
         setIsUploading(true)
 
-        const newlyIndexed = []
+        const newlyIndexed: { name: string; size: number; stats: { nodeCount: number; apiBlockCount: number; conditionBlockCount: number } }[] = []
         // Upload files to API Route that processes them using Supabase
         for (const file of files) {
             const formData = new FormData()
