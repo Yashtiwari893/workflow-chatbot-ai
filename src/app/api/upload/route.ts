@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/db/supabase";
+import { supabaseAdmin } from "@/lib/db/supabase";
 import { analyzeWorkflow, workflowSchema } from "@/lib/validation/workflow";
 
 export async function POST(req: NextRequest) {
@@ -30,9 +30,9 @@ export async function POST(req: NextRequest) {
 
         const stats = analyzeWorkflow(parseResult.data);
 
-        // Save to Supabase Storage (Mocking here, real one requires proper anon key & RLS)
+        // Save to Supabase Storage using admin client (bypasses RLS)
         const filePath = `workflows/${Date.now()}-${file.name}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
             .from("workflow_files")
             .upload(filePath, file);
 
@@ -41,8 +41,8 @@ export async function POST(req: NextRequest) {
             // We can still continue recording metadata if we want, or fail here
         }
 
-        // Save metadata to Supabase DB
-        const { data: dbData, error: dbError } = await supabase
+        // Save metadata to Supabase DB using admin client (bypasses RLS)
+        const { data: dbData, error: dbError } = await supabaseAdmin
             .from("workflow_samples")
             .insert([
                 {
