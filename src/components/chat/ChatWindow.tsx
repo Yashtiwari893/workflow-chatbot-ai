@@ -39,9 +39,10 @@ export function ChatWindow() {
 
             let replyContent = ""
             if (data.error) {
-                replyContent = `Error: ${data.error}`
+                replyContent = `❌ Error: ${data.error}`
             } else {
-                replyContent = "I have drafted the JSON logic based on your requirement."
+                const m = data.metadata
+                replyContent = `✅ 11za workflow generated!\n\n📊 Stats:\n• Nodes: ${m?.nodeCount || 0}\n• Edges: ${m?.edgeCount || 0}\n• Schema Valid: ${m?.schemaValid ? "Yes" : "⚠️ Partial"}\n• Graph Valid: ${m?.graphValid ? "Yes" : `⚠️ Auto-fixed ${m?.autoFixedErrors?.length} issue(s)`}\n\nReady to copy or download for 11za import! 🚀`
                 if (data.data) {
                     setActiveJson(JSON.stringify(data.data, null, 2))
                 }
