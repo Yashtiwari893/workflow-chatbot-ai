@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <div className="flex w-full h-full">
       {/* Left Chat Area */}
-      <div className="flex-1 max-w-2xl border-r border-border bg-background flex flex-col h-full">
+      <div className="flex-1 max-w-3xl border-r border-border bg-background flex flex-col h-full">
         <div className="p-4 border-b border-border bg-card shadow-sm">
           <h2 className="text-xl font-bold">AI Workflow Assistant</h2>
           <p className="text-xs text-muted-foreground">Type your requirements to generate a valid JSON workflow</p>
