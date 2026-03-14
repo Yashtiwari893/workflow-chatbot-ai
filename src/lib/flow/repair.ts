@@ -146,7 +146,7 @@ export function autoRepairFlow(data: WorkflowData, checkResult: GraphCheckResult
     const seenEdgeIds = new Set<string>();
     edges = edges.map((edge) => {
         if (seenEdgeIds.has(edge.id)) {
-            const newId = buildEdgeId(edge.source, edge.target, edge.sourceHandle) + `${Date.now()}`;
+            const newId = buildEdgeId(edge.source, edge.target, edge.sourceHandle ?? undefined) + `${Date.now()}`;
             repairsApplied.push(`Duplicate edge ID "${edge.id}" re-generated to "${newId}".`);
             return { ...edge, id: newId };
         }

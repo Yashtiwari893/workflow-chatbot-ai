@@ -35,19 +35,21 @@ export function DragDropZone({ onUpload }: DragDropZoneProps) {
     return (
         <div
             className={cn(
-                "relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-xl transition-colors bg-card",
-                isDragOver ? "border-primary bg-primary/5" : "border-muted-foreground/30 hover:border-primary/50"
+                "relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-2xl transition-all bg-white",
+                isDragOver ? "border-[#00D084] bg-emerald-50/50" : "border-slate-200 hover:border-[#00D084]/50 hover:bg-slate-50/30"
             )}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground" />
-                <p className="mb-2 text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground">Click to upload</span> or drag and drop
+                <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
+                    <UploadCloud className="w-8 h-8 text-[#00D084]" />
+                </div>
+                <p className="mb-2 text-sm text-slate-600">
+                    <span className="font-bold text-[#0D163F]">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-muted-foreground">JSON workflow files only (MAX: 5MB)</p>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">JSON workflow files only (MAX: 5MB)</p>
             </div>
             <input
                 type="file"

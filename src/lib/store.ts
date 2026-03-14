@@ -38,6 +38,11 @@ interface WorkflowStore {
     addToHistory: (record: GenerationRecord) => void;
     clearHistory: () => void;
     generationCount: number;
+
+    // ── UI State ─────────────────────────────────────────────────────────────
+    isSidebarOpen: boolean;
+    toggleSidebar: () => void;
+    setSidebarOpen: (open: boolean) => void;
 }
 
 export const useWorkflowStore = create<WorkflowStore>()(
@@ -59,6 +64,11 @@ export const useWorkflowStore = create<WorkflowStore>()(
                     generationCount: state.generationCount + 1,
                 })),
             clearHistory: () => set({ history: [], generationCount: 0 }),
+
+            // ── UI State ─────────────────────────────────────────────────────
+            isSidebarOpen: true,
+            toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+            setSidebarOpen: (open: boolean) => set({ isSidebarOpen: open }),
         }),
         {
             name: "11za-workflow-store", // localStorage key

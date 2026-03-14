@@ -17,6 +17,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@types/uuid": "^10.0.0",
     "@xyflow/react": "^12.10.1",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.3",
     "groq-sdk": "^0.37.0",

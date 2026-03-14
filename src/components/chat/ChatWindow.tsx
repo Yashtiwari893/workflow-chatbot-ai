@@ -4,6 +4,7 @@ import * as React from "react"
 import { MessageBubble } from "./MessageBubble"
 import { Send, Loader } from "lucide-react"
 import { useWorkflowStore } from "@/lib/store"
+import { Button } from "@/components/ui/button"
 import type { GenerationRecord } from "@/lib/store"
 
 export interface ChatMessage {
@@ -23,6 +24,15 @@ export function ChatWindow() {
         },
     ])
     const [input, setInput] = React.useState("")
+    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+
+    // Auto-resize textarea
+    React.useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto"
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+        }
+    }, [input])
 
     // Auto-scroll to bottom on new messages
     const messagesEndRef = React.useRef<HTMLDivElement>(null)
@@ -136,23 +146,20 @@ export function ChatWindow() {
     }
 
     return (
-        <div className="flex w-full flex-col h-full bg-card shadow overflow-hidden">
-            <div className="flex-1 overflow-y-auto w-full p-4 space-y-4">
+        <div className="flex w-full flex-col h-full bg-white overflow-hidden border-r border-slate-200">
+            <div className="flex-1 overflow-y-auto w-full p-6 lg:p-8 space-y-6 custom-scrollbar bg-white">
                 {messages.map((message) => (
                     <MessageBubble key={message.id} role={message.role} content={message.content} />
                 ))}
                 {isLoading && (
-                    <div className="flex flex-col space-y-2 p-4">
-                        <div className="flex items-center space-x-3 text-primary animate-pulse">
-                            <Loader className="w-5 h-5 animate-spin" />
-                            <span className="text-sm font-medium">
-                                {messages.length % 2 === 0 ? "Analyzing requirements..." : "Generating 11za workflow..."}
+                    <div className="flex flex-col space-y-4 p-2">
+                        <div className="flex items-center space-x-3 text-slate-400 animate-pulse">
+                            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-100">
+                                <Loader className="w-4 h-4 animate-spin" />
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
+                                Processing Neural Graph
                             </span>
-                        </div>
-                        <div className="flex space-x-1 pl-8">
-                            <div className="h-1 w-1 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                            <div className="h-1 w-1 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                            <div className="h-1 w-1 bg-primary/40 rounded-full animate-bounce"></div>
                         </div>
                     </div>
                 )}
@@ -160,38 +167,44 @@ export function ChatWindow() {
                 <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-4 bg-background border-t border-border">
+            <div className="p-6 bg-white border-t border-slate-100">
                 <form
                     onSubmit={(e) => {
                         e.preventDefault()
                         handleSend()
                     }}
-                    className="flex w-full items-end space-x-2"
+                    className="flex w-full items-end space-x-3"
                 >
-                    <textarea
-                        rows={1}
-                        className="flex-1 min-h-[44px] max-h-32 resize-none rounded-2xl border border-border bg-card px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary shadow-sm transition-all"
-                        placeholder="Describe your workflow in detail..."
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                                e.preventDefault()
-                                handleSend()
-                            }
-                        }}
-                        disabled={isLoading}
-                        aria-label="Workflow description input"
-                    />
-                    <button
+                    <div className="flex-1 bg-slate-50 border border-slate-200 rounded-lg hover:border-slate-300 focus-within:border-brand-green focus-within:ring-1 focus-within:ring-brand-green/20 transition-all duration-150">
+                        <textarea
+                            ref={textareaRef}
+                            rows={1}
+                            className="w-full min-h-[44px] max-h-32 overflow-y-auto resize-none bg-transparent border-none px-4 py-3 text-[14px] text-slate-900 focus:ring-0 outline-none focus:outline-none placeholder:text-slate-400 font-medium"
+                            placeholder="Type a workflow requirement..."
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault()
+                                    handleSend()
+                                }
+                            }}
+                            disabled={isLoading}
+                        />
+                    </div>
+                    <Button
                         type="submit"
                         disabled={isLoading || !input.trim()}
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-primary text-primary-foreground h-11 w-11 flex-shrink-0 transition-colors hover:bg-primary/90 disabled:opacity-50 shadow-sm"
-                        aria-label="Send"
+                        variant="premium"
+                        size="icon"
+                        className="rounded-lg h-11 w-11 shadow-sm transition-all hover:opacity-90 active:scale-95"
                     >
-                        <Send className="w-5 h-5" />
-                    </button>
+                        <Send className="w-4 h-4 text-white" />
+                    </Button>
                 </form>
+                <div className="mt-3 flex justify-center">
+                    <p className="text-[10px] font-semibold text-slate-300 uppercase tracking-widest">Shift + Enter for new line</p>
+                </div>
             </div>
         </div>
     )

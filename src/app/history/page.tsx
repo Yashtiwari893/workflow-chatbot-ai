@@ -2,9 +2,10 @@
 
 import * as React from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Clock, CheckCircle2, AlertCircle, Wrench, Trash2 } from "lucide-react"
+import { Trash2, History, Clock, Calendar, Zap, CheckCircle2, AlertCircle, Wrench } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { useWorkflowStore } from "@/lib/store"
-// Button component is minimal — use plain button for variant styling
+import { cn } from "@/lib/utils"
 
 export default function HistoryPage() {
     const { history, clearHistory, setActiveJson } = useWorkflowStore()
@@ -15,12 +16,11 @@ export default function HistoryPage() {
     }, [])
 
     if (!mounted) {
-        return <div className="p-8 h-full bg-background" />;
+        return <div className="p-10 h-full bg-[#F9FBFA]" />;
     }
 
     const handleLoad = (json: string) => {
         setActiveJson(json)
-        // Navigate to main page
         window.location.href = "/"
     }
 
@@ -36,101 +36,106 @@ export default function HistoryPage() {
     }
 
     return (
-        <div className="flex flex-col p-8 h-full space-y-6 overflow-y-auto">
-            <div className="flex items-center justify-between">
+        <div className="flex flex-col p-6 lg:p-12 h-full space-y-10 lg:space-y-12 bg-transparent overflow-y-auto custom-scrollbar">
+            <header className="max-w-4xl flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                 <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Generation History</h2>
-                    <p className="text-muted-foreground">
-                        Previously generated AI workflow JSONs — stored locally in your browser.
+                    <div className="flex items-center space-x-3 mb-2">
+                        <div className="w-8 h-8 rounded-lg bg-brand-navy flex items-center justify-center">
+                            <History className="w-4 h-4 text-brand-green" />
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Activity Log</span>
+                    </div>
+                    <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-brand-navy">Generation History</h2>
+                    <p className="text-slate-500 mt-2.5 font-medium text-sm lg:text-base leading-relaxed">
+                        Audit and manage historical workflow generations and AI corrections.
                     </p>
                 </div>
                 {history.length > 0 && (
-                    <button
-                        className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-red-400 hover:bg-secondary transition-colors"
+                    <Button 
+                        variant="outline" 
                         onClick={() => {
                             if (confirm("Clear all history? This cannot be undone.")) {
                                 clearHistory()
                             }
                         }}
+                        className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors h-10 px-6 rounded-xl border border-slate-100 bg-white shadow-sm"
                     >
-                        <Trash2 className="w-4 h-4" />
-                        Clear History
-                    </button>
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Clear Archive
+                    </Button>
                 )}
-            </div>
+            </header>
 
-            {history.length === 0 ? (
-                <div className="flex flex-col items-center justify-center flex-1 text-center py-20">
-                    <Clock className="w-12 h-12 text-muted-foreground mb-4 opacity-40" />
-                    <p className="text-muted-foreground text-sm">No generations yet.</p>
-                    <p className="text-muted-foreground text-xs mt-1">
-                        Generate a workflow from the Chat Generator page and it will appear here.
-                    </p>
+            {!history || history.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center py-20 lg:py-40 text-center">
+                    <div className="w-24 h-24 rounded-[2.5rem] bg-white shadow-xl shadow-slate-100 flex items-center justify-center border border-slate-50">
+                        <Clock className="w-10 h-10 text-slate-200" />
+                    </div>
+                    <p className="mt-8 text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">No records found</p>
                 </div>
             ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {history.map((record) => (
-                        <Card
-                            key={record.id}
-                            className="hover:shadow-md transition-shadow cursor-pointer group border-border"
+                <div className="grid gap-6 lg:gap-10 lg:grid-cols-2 max-w-7xl">
+                    {history.map((record: any) => (
+                        <Card 
+                            key={record.id} 
+                            className="border-none bg-white shadow-xl shadow-slate-200/30 rounded-[1.5rem] lg:rounded-[2.2rem] overflow-hidden group hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 cursor-pointer"
                             onClick={() => handleLoad(record.json)}
                         >
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-sm font-medium flex items-start justify-between gap-2">
-                                    <span className="line-clamp-2 flex-1">{record.prompt}</span>
-                                    <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-                                </CardTitle>
-                                <CardDescription className="text-xs">
-                                    {formatDate(record.generatedAt)}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                {/* Stats row */}
-                                <div className="flex gap-3 text-xs text-muted-foreground">
-                                    <span>{record.nodeCount} nodes</span>
-                                    <span>·</span>
-                                    <span>{record.edgeCount} edges</span>
+                            <CardHeader className="p-8 lg:p-10 border-b border-slate-50 bg-slate-50/20">
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="px-2.5 py-1 rounded-lg bg-brand-navy text-white text-[9px] font-bold uppercase tracking-wider">
+                                                {new Date(record.generatedAt).toLocaleDateString()}
+                                            </div>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                {new Date(record.generatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                        </div>
+                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-all duration-500">
+                                            <Zap className="w-5 h-5 text-slate-300 group-hover:text-brand-green" />
+                                        </div>
+                                    </div>
+                                    <CardTitle className="text-base lg:text-lg font-bold text-brand-navy group-hover:text-brand-green transition-colors leading-snug italic line-clamp-2">
+                                        "{record.prompt}"
+                                    </CardTitle>
                                 </div>
-
-                                {/* Validation badges */}
-                                <div className="flex gap-2 flex-wrap">
-                                    <span
-                                        className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${record.schemaValid
-                                            ? "bg-emerald-500/15 text-emerald-400"
-                                            : "bg-amber-500/15 text-amber-400"
-                                            }`}
-                                    >
-                                        {record.schemaValid ? (
-                                            <CheckCircle2 className="w-3 h-3" />
-                                        ) : (
-                                            <AlertCircle className="w-3 h-3" />
-                                        )}
-                                        Schema {record.schemaValid ? "Valid" : "Partial"}
-                                    </span>
-                                    <span
-                                        className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${record.graphValid
-                                            ? "bg-emerald-500/15 text-emerald-400"
-                                            : "bg-amber-500/15 text-amber-400"
-                                            }`}
-                                    >
-                                        {record.graphValid ? (
-                                            <CheckCircle2 className="w-3 h-3" />
-                                        ) : (
-                                            <AlertCircle className="w-3 h-3" />
-                                        )}
-                                        Graph {record.graphValid ? "Valid" : "Repaired"}
-                                    </span>
+                            </CardHeader>
+                            <CardContent className="p-8 lg:p-10 bg-white">
+                                <div className="grid grid-cols-2 gap-6 mb-8">
+                                    <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100/50">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Architecture</p>
+                                        <p className="text-xl font-bold text-brand-navy">{record.nodeCount} <span className="text-[10px] text-slate-500 font-semibold">Nodes</span></p>
+                                    </div>
+                                    <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100/50">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Density</p>
+                                        <p className="text-xl font-bold text-brand-navy">{record.edgeCount} <span className="text-[10px] text-slate-500 font-semibold">Edges</span></p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-wrap gap-2.5">
+                                    <div className={cn(
+                                        "px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all",
+                                        record.schemaValid 
+                                            ? "bg-emerald-50 text-brand-green border-emerald-100" 
+                                            : "bg-orange-50 text-orange-600 border-orange-100"
+                                    )}>
+                                        Schema: {record.schemaValid ? "Valid" : "Partial"}
+                                    </div>
+                                    <div className={cn(
+                                        "px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all",
+                                        record.graphValid 
+                                            ? "bg-emerald-50 text-brand-green border-emerald-100" 
+                                            : "bg-red-50 text-red-600 border-red-100"
+                                    )}>
+                                        Graph: {record.graphValid ? "Secure" : "Issues"}
+                                    </div>
                                     {record.repairsApplied.length > 0 && (
-                                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium bg-blue-500/15 text-blue-400">
-                                            <Wrench className="w-3 h-3" />
-                                            {record.repairsApplied.length} fix{record.repairsApplied.length > 1 ? "es" : ""}
-                                        </span>
+                                        <div className="px-4 py-1.5 rounded-full bg-brand-navy text-white text-[10px] font-bold uppercase tracking-widest flex items-center">
+                                            <Wrench className="w-3 h-3 mr-2" />
+                                            {record.repairsApplied.length} Fixes
+                                        </div>
                                     )}
                                 </div>
-
-                                <p className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                                    Click to load this workflow →
-                                </p>
                             </CardContent>
                         </Card>
                     ))}

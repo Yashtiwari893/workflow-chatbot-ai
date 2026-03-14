@@ -2,25 +2,46 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-background: #09090b;
-  --color-foreground: #fafafa;
-  --color-card: #18181b;
-  --color-card-foreground: #fafafa;
-  --color-primary: #3b82f6; 
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #27272a;
-  --color-secondary-foreground: #fafafa;
-  --color-muted: #27272a;
-  --color-muted-foreground: #a1a1aa;
-  --color-accent: #3b82f6;
-  --color-accent-foreground: #ffffff;
-  --color-border: #27272a;
-  --color-ring: #3b82f6;
+  /* Brand Colors */
+  --color-brand-navy: #0D163F;
+  --color-brand-green: #00D084;
+  --color-brand-green-hover: #09AF72;
+  --color-brand-green-light: #F0FDF4;
+  
+  /* System Colors */
+  --color-background: #F4F7F6;
+  --color-foreground: #1E293B; /* Slate-800 for better secondary text */
+  --color-card: #FFFFFF;
+  --color-border: #E8EDEB;
+  
+  /* Text Neutrals */
+  --color-text-primary: #0D163F;
+  --color-text-secondary: #475569; /* Slate-600 */
+  --color-text-muted: #94A3B8;     /* Slate-400 */
+  
+  /* Transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s ease-in-out;
+
+  /* Overriding Tailwind Defaults for Brand */
+  --color-primary: var(--color-brand-green);
+  --color-primary-foreground: #FFFFFF;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 .react-flow__node {
